@@ -125,6 +125,9 @@ msgstr "socks代理端口"
 msgid "Redir Port"
 msgstr "redir代理端口"
 
+msgid "TProxy Port"
+msgstr "TProxy 代理端口"
+
 msgid "No Update | Return"
 msgstr "已安装最新本 | 返回"
 

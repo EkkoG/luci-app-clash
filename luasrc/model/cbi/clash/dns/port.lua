@@ -31,6 +31,13 @@ o.datatype = "port"
 o.rmempty = false
 o.description = translate("Redir Port")
 
+o = s:option(Value, "tproxy_port")
+o.title = translate("TProxy Port")
+o.default = 7895
+o.datatype = "port"
+o.rmempty = false
+o.description = translate("TProxy Port")
+
 o = s:option(Value, "mixed_port")
 o.title = translate("Mixed Port")
 o.default = 7893
