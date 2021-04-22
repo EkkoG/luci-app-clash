@@ -1010,5 +1010,6 @@ if pidof clash >/dev/null; then
 	  yml_dns_change 2>/dev/null
       rules 2>/dev/null	 
 	  echo "Clash Reload Completed"	
+	  echo "Clash for OpenWRT" >$REAL_LOG
 fi	  
 }
