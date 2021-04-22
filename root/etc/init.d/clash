@@ -629,7 +629,7 @@ if  [  -f $CONFIG_YAML ] && [ "$(ls -l $CONFIG_YAML|awk '{print int($5)}')" -ne 
 	
     ip_rules >/dev/null 2>&1
 	
-        
+
     if [ "$(uci get clash.config.core)" -eq 1 ];then
 			chown nobody:nogroup /etc/clash/clash 2>/dev/null
 			#使用nobody启动内核方便代理路由自身流量
@@ -900,8 +900,8 @@ remove_mark(){
 
 		ip6t_m="ip6tables -t mangle"
 		for chain in "PREROUTING" "OUTPUT"; do
-			for i in $(seq 1 $($ip6t_m -nL $chain | grep -c PSW)); do
-				local index=$($ip6t_m --line-number -nL $chain | grep PSW | head -1 | awk '{print $1}')
+			for i in $(seq 1 $($ip6t_m -nL $chain | grep -c clash)); do
+				local index=$($ip6t_m --line-number -nL $chain | grep clash | head -1 | awk '{print $1}')
 				$ip6t_m -D $chain $index 2>/dev/null
 			done
 		done
