@@ -93,7 +93,7 @@ elif [ ! -f "$CONFIG_YAML_PATH" ] && [ ! -f "$CONFIG_YAML" ];then
 		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
 			echo "No config found" >$REAL_LOG 
 		elif [ "${lang}" == "zh_cn" ];then
-			echo "找不到配置文章" >$REAL_LOG
+			echo "找不到配置文件" >$REAL_LOG
 		fi
 		sleep 5
 		echo "Clash for OpenWRT" >$REAL_LOG
