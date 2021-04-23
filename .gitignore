@@ -1,0 +1,6 @@
+build.sh
+docker-compose.yml
+tools/po2lmo/src/po2lmo
+tools/po2lmo/src/po2lmo.o
+tools/po2lmo/src/template_lmo.o
+po/zh-cn/clash.zh-cn.lmo
