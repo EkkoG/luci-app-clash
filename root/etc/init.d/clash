@@ -324,27 +324,34 @@ rules(){
 			
 		if [ "${core}" -eq 1 ] || [ "${core}" -eq 2 ];then
 		
-			iptables -t nat -N clash
-			iptables -t nat -F clash
-			iptables -t nat -A clash -m set --match-set localnetwork dst -j RETURN
-			iptables -t nat -A clash -m set --match-set reject_lan src -j RETURN
-			iptables -t nat -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t nat -A clash -m set --match-set china dst -j RETURN			
-			iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
-			iptables -t nat -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
-			iptables -t nat -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
-           	iptables -t nat -A PREROUTING -p tcp -j clash
-
-				
-			ip -f inet rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
-			ip -f inet route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"			
 			iptables -t mangle -N clash
+			iptables -t mangle -F clash
 			iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
 			iptables -t mangle -A clash -m set --match-set reject_lan src -j RETURN
 			iptables -t mangle -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t mangle -A clash -m set --match-set china dst -j RETURN
-			iptables -t mangle -A clash -p udp -j TPROXY --on-port "${redir_port}" --tproxy-mark "$PROXY_FWMARK"
-			iptables -t mangle -A PREROUTING -p udp -j clash
+			iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
+			# iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
+			iptables -t mangle -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
+			iptables -t mangle -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
+           	iptables -t mangle -A PREROUTING -j clash
+
+			iptables -t mangle -N clash_output
+			iptables -t mangle -A clash_output -m set --match-set localnetwork dst -j RETURN
+			iptables -t mangle -A clash_output -m set --match-set reject_lan src -j RETURN
+			iptables -t mangle -A clash_output -m set ! --match-set proxy_lan src -j RETURN
+			iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
+			iptables -t mangle -A OUTPUT -j clash_output
+
+			# 防止出现死循环
+			iptables -t mangle -A clash_output -p tcp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_output -p udp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
+
+			iptables -t mangle -A clash -p tcp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
+
+			iptables -t mangle -A clash -p udp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
+				
+			ip -f inet rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
+			ip -f inet route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"			
 			
 				
 			
@@ -899,15 +906,19 @@ remove_mark(){
     	ip -f inet6 route del local default  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
 
 		ip6t_m="ip6tables -t mangle"
-		for chain in "PREROUTING" "OUTPUT"; do
-			for i in $(seq 1 $($ip6t_m -nL $chain | grep -c clash)); do
-				local index=$($ip6t_m --line-number -nL $chain | grep clash | head -1 | awk '{print $1}')
-				$ip6t_m -D $chain $index 2>/dev/null
+		ipt_m="iptables -t mangle"
+		ipt_n="iptables -t nat"
+		for ipt in "$ipt_n" "$ipt_m" "$ip6t_m"; do
+			for chain in "PREROUTING" "OUTPUT"; do
+				for i in $(seq 1 $($ipt -nL $chain | grep -c clash)); do
+					local index=$($ipt --line-number -nL $chain | grep clash | head -1 | awk '{print $1}')
+					$ipt -D $chain $index 2>/dev/null
+				done
 			done
-		done
-		for chain in "clash" "clash_out"; do
-			$ip6t_m -F $chain 2>/dev/null
-			$ip6t_m -X $chain 2>/dev/null
+			for chain in "clash" "clash_out"; do
+				$ipt -F $chain 2>/dev/null
+				$ipt -X $chain 2>/dev/null
+			done
 		done
 
 
