@@ -330,10 +330,10 @@ rules(){
 		
 			iptables -t mangle -N clash
 			iptables -t mangle -F clash
+			iptables -t mangle -A clash -m set --match-set china_dns dst -j RETURN			
 			iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
 			iptables -t mangle -A clash -m set --match-set reject_lan src -j RETURN
 			iptables -t mangle -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t mangle -A clash -m set --match-set china_dns dst -j RETURN			
 
 			if [ "${global}" -eq 0 ];then
 				iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
@@ -943,7 +943,7 @@ remove_mark(){
 					$ipt -D $chain $index 2>/dev/null
 				done
 			done
-			for chain in "clash" "clash_out" "clash_divert"; do
+			for chain in "clash" "clash_output" "clash_divert"; do
 				$ipt -F $chain 2>/dev/null
 				$ipt -X $chain 2>/dev/null
 			done
