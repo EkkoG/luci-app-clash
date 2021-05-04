@@ -4,3 +4,5 @@ tools/po2lmo/src/po2lmo
 tools/po2lmo/src/po2lmo.o
 tools/po2lmo/src/template_lmo.o
 po/zh-cn/clash.zh-cn.lmo
+bin/
+.DS_Store

@@ -38,6 +38,7 @@ config clash 'config'
 	option listen_port '5300'
 	option interf '0'
 	option enable_dns '1'
+	option global '1'
 
 
 config dnshijack

@@ -220,6 +220,7 @@ rules(){
 		tproxy_port=$(uci get clash.config.tproxy_port 2>/dev/null)
 		#fake_ip_range=$(uci get clash.config.fake_ip_range 2>/dev/null)		
 		ipv6=$(uci get clash.config.enable_ipv6 2>/dev/null)
+		global=$(uci get clash.config.global 2>/dev/null)
 		core=$(uci get clash.config.core 2>/dev/null)
 		tun_mode=$(uci get clash.config.tun_mode 2>/dev/null)
 		#lan_ip=$(uci get network.lan.ipaddr 2>/dev/null |awk -F '/' '{print $1}' 2>/dev/null)
@@ -287,7 +288,10 @@ rules(){
 			fi			
 
 
+		if [ "${global}" -eq 0 ];then
 			sh /usr/share/clash/chinaipset.sh >/dev/null 2>&1
+		fi
+		sh /usr/share/clash/chinadnsipset.sh >/dev/null 2>&1
 
 		
 		if [ "$(iptables -t nat -nL PREROUTING --line-number |grep "udp dpt:53" |grep "0.0.0.0/0 \{0,\}0.0.0.0/0" |wc -l)" -gt 1 ] && [ "$dnsforwader" -eq "1" ]; then
@@ -323,18 +327,17 @@ rules(){
 		EOF
 			
 		if [ "${core}" -eq 1 ] || [ "${core}" -eq 2 ];then
-			# 据说能提升性能？
-			iptables -t mangle -N clash_divert
-			iptables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
-			iptables -t mangle -A clash_divert -j ACCEPT
-			iptables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 		
 			iptables -t mangle -N clash
 			iptables -t mangle -F clash
 			iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
 			iptables -t mangle -A clash -m set --match-set reject_lan src -j RETURN
 			iptables -t mangle -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
+			iptables -t mangle -A clash -m set --match-set china_dns dst -j RETURN			
+
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
+			fi
 			# iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
 			iptables -t mangle -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
 			iptables -t mangle -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
@@ -342,9 +345,12 @@ rules(){
 
 			iptables -t mangle -N clash_output
 			iptables -t mangle -A clash_output -m set --match-set localnetwork dst -j RETURN
+			iptables -t mangle -A clash_output -m set --match-set china_dns dst -j RETURN
 			iptables -t mangle -A clash_output -m set --match-set reject_lan src -j RETURN
 			iptables -t mangle -A clash_output -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
+			fi
 			iptables -t mangle -A OUTPUT -j clash_output
 
 			# 防止出现死循环
@@ -376,19 +382,20 @@ rules(){
    
    
 			if [ "${ipv6}" == "true" ]; then	
-				# 据说能提升性能？
-				ip6tables -t mangle -N clash_divert
-				ip6tables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
-				ip6tables -t mangle -A clash_divert -j ACCEPT
-				ip6tables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 
 				ip6tables -t mangle -N clash
 				ip6tables -t mangle -F clash
+				ip6tables -t mangle -A clash -m set --match-set china_dns6 dst -j RETURN			
 				ip6tables -t mangle -A clash -m set --match-set localnetwork6 dst -j RETURN
+
+				if [ "${global}" -eq 0 ];then
+					ip6tables -t mangle -A clash -m set --match-set china6 dst -j RETURN			
+				fi
 				ip6tables -t mangle -A PREROUTING -j clash
 
 				ip6tables -t mangle -N clash_output
 				ip6tables -t mangle -F clash_output
+				ip6tables -t mangle -A clash_output -m set --match-set china_dns6 dst -j RETURN
 				ip6tables -t mangle -A clash_output -m set --match-set localnetwork6 dst -j RETURN
 				ip6tables -t mangle -A OUTPUT -j clash_output
 
@@ -438,7 +445,9 @@ rules(){
             iptables -t mangle -N clash
             iptables -t mangle -F clash
             iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
-			iptables -t mangle -A clash -m set --match-set china dst -j RETURN
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash -m set --match-set china dst -j RETURN
+			fi
 			if [ "${fake_ip}" == "fake-ip" ];then
 			iptables -t mangle -A clash -d 198.18.0.0/16 -j MARK --set-mark "$PROXY_FWMARK"
 			fi
@@ -446,7 +455,12 @@ rules(){
             iptables -t mangle -I OUTPUT -j clash
             #iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -j MARK --set-mark "$PROXY_FWMARK"
 			#iptables -t mangle -I PREROUTING -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
-			iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
+
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
+			else
+				iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -j MARK --set-mark "$PROXY_FWMARK"
+			fi
 			iptables -t mangle -I PREROUTING -m set --match-set reject_lan src -j RETURN >/dev/null 2>&1
 			iptables -t mangle -I PREROUTING -m set ! --match-set proxy_lan src -j RETURN >/dev/null 2>&1			
 			iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT
@@ -820,6 +834,9 @@ remove_mark(){
 		ipset destroy proxy_lan >/dev/null 2>&1
 		ipset -! flush china >/dev/null 2>&1
 		ipset destroy china >/dev/null 2>&1
+
+		ipset -! flush china_dns >/dev/null 2>&1
+		ipset destroy china_dns >/dev/null 2>&1
 		
 		proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/! match-set proxy_lan src/=' | sort -r)
 		for natx in $proxy_lan; do
@@ -932,6 +949,11 @@ remove_mark(){
 			done
 		done
 
+		ipset -! flush china6 >/dev/null 2>&1
+		ipset destroy china6 >/dev/null 2>&1
+
+		ipset -! flush china_dns6 >/dev/null 2>&1
+		ipset destroy china_dns6 >/dev/null 2>&1
 
 		
 		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then

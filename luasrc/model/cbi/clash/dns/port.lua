@@ -99,6 +99,12 @@ o:value("Script", translate("SCRIPT"))
 o:value("direct", translate("DIRECT"))
 o.default = "Rule"
 
+o = s:option(ListValue, "global", translate("Proxy China traffic"))
+o.description = translate("Make China traffic go to Clash")
+o:value("1", translate("China traffic to Clash"))
+o:value("0", translate("China traffic not to Clash"))
+o.default = "1"
+
 o = s:option(ListValue, "level", translate("Log level"))
 o.description = translate("Choose Log Level")
 o:value("info", "info")

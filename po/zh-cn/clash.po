@@ -137,6 +137,18 @@ msgstr "日志级别"
 msgid "Choose Log Level"
 msgstr "选择日志级别"
 
+msgid "Proxy China traffic"
+msgstr "是否代理国内流量"
+
+msgid "China traffic not to Clash"
+msgstr "中国列表以外"
+
+msgid "China traffic to Clash"
+msgstr "全局"
+
+msgid "Make China traffic go to Clash"
+msgstr "是否代理国内网站，和[代理模式]不同，如果选择中国列表以外则国内流量不经过 Clash"
+
 msgid "Overview"
 msgstr "概览"
 
