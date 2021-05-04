@@ -323,6 +323,11 @@ rules(){
 		EOF
 			
 		if [ "${core}" -eq 1 ] || [ "${core}" -eq 2 ];then
+			# 据说能提升性能？
+			iptables -t mangle -N clash_divert
+			iptables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_divert -j ACCEPT
+			iptables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 		
 			iptables -t mangle -N clash
 			iptables -t mangle -F clash
@@ -371,6 +376,12 @@ rules(){
    
    
 			if [ "${ipv6}" == "true" ]; then	
+				# 据说能提升性能？
+				ip6tables -t mangle -N clash_divert
+				ip6tables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_divert -j ACCEPT
+				ip6tables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
+
 				ip6tables -t mangle -N clash
 				ip6tables -t mangle -F clash
 				ip6tables -t mangle -A clash -m set --match-set localnetwork6 dst -j RETURN
@@ -915,7 +926,7 @@ remove_mark(){
 					$ipt -D $chain $index 2>/dev/null
 				done
 			done
-			for chain in "clash" "clash_out"; do
+			for chain in "clash" "clash_out" "clash_divert"; do
 				$ipt -F $chain 2>/dev/null
 				$ipt -X $chain 2>/dev/null
 			done
