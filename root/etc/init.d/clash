@@ -327,6 +327,11 @@ rules(){
 		EOF
 			
 		if [ "${core}" -eq 1 ] || [ "${core}" -eq 2 ];then
+			# 据说能提升性能？
+			iptables -t mangle -N clash_divert
+			iptables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_divert -j ACCEPT
+			iptables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 		
 			iptables -t mangle -N clash
 			iptables -t mangle -F clash
@@ -339,8 +344,8 @@ rules(){
 				iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
 			fi
 			# iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
-			iptables -t mangle -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
-			iptables -t mangle -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
+			iptables -t nat -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
+			iptables -t nat -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
            	iptables -t mangle -A PREROUTING -j clash
 
 			iptables -t mangle -N clash_output
@@ -352,10 +357,11 @@ rules(){
 				iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
 			fi
 			iptables -t mangle -A OUTPUT -j clash_output
+			iptables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
 
 			# 防止出现死循环
-			iptables -t mangle -A clash_output -p tcp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
-			iptables -t mangle -A clash_output -p udp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
 
 			iptables -t mangle -A clash -p tcp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
 
@@ -380,13 +386,18 @@ rules(){
 			  iptables -t nat -A OUTPUT -p tcp -j clash_output
 		   fi
    
-   
 			if [ "${ipv6}" == "true" ]; then	
+				# 据说能提升性能？
+				ip6tables -t mangle -N clash_divert
+				ip6tables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_divert -j ACCEPT
+				ip6tables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 
 				ip6tables -t mangle -N clash
 				ip6tables -t mangle -F clash
 				ip6tables -t mangle -A clash -m set --match-set china_dns6 dst -j RETURN			
 				ip6tables -t mangle -A clash -m set --match-set localnetwork6 dst -j RETURN
+
 
 				if [ "${global}" -eq 0 ];then
 					ip6tables -t mangle -A clash -m set --match-set china6 dst -j RETURN			
@@ -398,17 +409,17 @@ rules(){
 				ip6tables -t mangle -A clash_output -m set --match-set china_dns6 dst -j RETURN
 				ip6tables -t mangle -A clash_output -m set --match-set localnetwork6 dst -j RETURN
 				ip6tables -t mangle -A OUTPUT -j clash_output
+				ip6tables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
 
 				ip -6 rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
 				ip -6 route add local ::/0 dev lo table "$PROXY_ROUTE_TABLE"
 
 				# 防止出现死循环
-				ip6tables -t mangle -A clash_output -p tcp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
-				ip6tables -t mangle -A clash_output -p udp -m owner ! --uid-owner 65534 -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
 
 
 				ip6tables -t mangle -A clash -p tcp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
-
 				ip6tables -t mangle -A clash -p udp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
 			fi	
 			
