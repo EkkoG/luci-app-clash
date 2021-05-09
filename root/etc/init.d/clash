@@ -357,9 +357,9 @@ rules(){
 				iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
 			fi
 			iptables -t mangle -A OUTPUT -j clash_output
+			# 防止出现死循环 https://github.com/Dreamacro/clash/issues/158
 			iptables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
 
-			# 防止出现死循环
 			iptables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
 			iptables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
 
@@ -393,12 +393,12 @@ rules(){
 				ip6tables -t mangle -A clash_output -m set --match-set china_dns6 dst -j RETURN
 				ip6tables -t mangle -A clash_output -m set --match-set localnetwork6 dst -j RETURN
 				ip6tables -t mangle -A OUTPUT -j clash_output
+				# 防止出现死循环 https://github.com/Dreamacro/clash/issues/158
 				ip6tables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
 
 				ip -6 rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
 				ip -6 route add local ::/0 dev lo table "$PROXY_ROUTE_TABLE"
 
-				# 防止出现死循环
 				ip6tables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
 				ip6tables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
 
