@@ -16,8 +16,11 @@ tar zxvf /tmp/ipdb.tar.gz -C /tmp\
 && rm -rf /tmp/GeoLite2-Country_* >/dev/null 2>&1
 fi
 else
-wget -c4 --no-check-certificate --timeout=300 --user-agent="Mozilla" https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb -O /etc/clash/Country.mmdb
+wget -c4 --no-check-certificate --timeout=300 --user-agent="Mozilla" https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb -O /tmp/Country.mmdb && mv /tmp/Country.mmdb /etc/clash/Country.mmdb
 fi
+
+wget https://ispip.clang.cn/all_cn_ipv6.txt -O /usr/share/clash/china_ip6.txt
+wget https://ispip.clang.cn/all_cn.txt -O /usr/share/clash/china_ip.txt
 
 sleep 2
 touch /var/run/geoip_down_complete >/dev/null 2>&1
