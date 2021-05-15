@@ -55,6 +55,7 @@ if [ $type == "ssr2clash" ] && [ ! -z $url ];then
 		CONFIG_YAMLL="/tmp/conf"
 		da_password=$(uci get clash.config.dash_pass 2>/dev/null)
 		redir_port=$(uci get clash.config.redir_port 2>/dev/null)
+		tproxy_port=$(uci get clash.config.tproxy_port 2>/dev/null)
 		http_port=$(uci get clash.config.http_port 2>/dev/null)
 		socks_port=$(uci get clash.config.socks_port 2>/dev/null) 
 		dash_port=$(uci get clash.config.dash_port 2>/dev/null)
@@ -71,7 +72,8 @@ if [ $type == "ssr2clash" ] && [ ! -z $url ];then
 		sed -i "1i\#****CLASH-CONFIG-START****#" $CONFIG_YAML 2>/dev/null
 		sed -i "2i\port: ${http_port}" $CONFIG_YAML 2>/dev/null
 		sed -i "/port: ${http_port}/a\socks-port: ${socks_port}" $CONFIG_YAML 2>/dev/null 
-		sed -i "/socks-port: ${socks_port}/a\redir-port: ${redir_port}" $CONFIG_YAML 2>/dev/null 
+		sed -i "/socks-port: ${socks_port}/a\tproxy-port: ${tproxy_port}" $CONFIG_START 2>/dev/null 
+		sed -i "/tproxy-port: ${tproxy_port}/a\redir-port: ${redir_port}" $CONFIG_START 2>/dev/null 
 		sed -i "/redir-port: ${redir_port}/a\allow-lan: ${allow_lan}" $CONFIG_YAML 2>/dev/null 
 		if [ $allow_lan == "true" ];  then
 		sed -i "/allow-lan: ${allow_lan}/a\bind-address: \"${bind_addr}\"" $CONFIG_YAML 2>/dev/null 

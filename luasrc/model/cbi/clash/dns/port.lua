@@ -31,6 +31,13 @@ o.datatype = "port"
 o.rmempty = false
 o.description = translate("Redir Port")
 
+o = s:option(Value, "tproxy_port")
+o.title = translate("TProxy Port")
+o.default = 7895
+o.datatype = "port"
+o.rmempty = false
+o.description = translate("TProxy Port")
+
 o = s:option(Value, "mixed_port")
 o.title = translate("Mixed Port")
 o.default = 7893
@@ -91,6 +98,12 @@ o:value("global", translate("GLOBAL"))
 o:value("Script", translate("SCRIPT"))
 o:value("direct", translate("DIRECT"))
 o.default = "Rule"
+
+o = s:option(ListValue, "global", translate("Proxy China traffic"))
+o.description = translate("Make China traffic go to Clash")
+o:value("1", translate("China traffic to Clash"))
+o:value("0", translate("China traffic not to Clash"))
+o.default = "1"
 
 o = s:option(ListValue, "level", translate("Log level"))
 o.description = translate("Choose Log Level")

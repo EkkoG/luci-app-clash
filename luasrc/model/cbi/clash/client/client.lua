@@ -47,10 +47,5 @@ o.write = function()
   m.uci:commit("clash")
 end
 
-o = s:option(Button,"action")
-o.title = translate("Operation")
-o.template = "clash/start_stop"
-
-
 return m
 

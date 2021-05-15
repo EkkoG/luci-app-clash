@@ -5,9 +5,10 @@
 <meta http-equiv="x-dns-prefetch-control" content="on">
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">	
 <meta name="referrer" content="no-referrer">
-<link rel="preconnect" href="https://qqwry.api.skk.moe">
+<link rel="preconnect" href="https://geoip.gbxcloud.com">
 <link rel="preconnect" href="https://myip.ipip.net">
-<link rel="preconnect" href="https://api.ipify.org">
+<link rel="preconnect" href="https://api.ip.sb/geoip/">
+<link rel="preconnect" href="https://ip4.seeip.org/json">
 </head>
 </html>	
 <style>
@@ -278,6 +279,12 @@
 	</table>
 </fieldset>
 
+<fieldset class="cbi-section">
+	<div>
+		<input type="button" class="cbi-button cbi-button-apply" value="<%:Start%>" onclick=" return start() "/>
+		<input type="button" class="cbi-button cbi-button-apply" value="<%:Stop%>" onclick=" return stop() "/>
+	</div>
+</fieldset>
 
 
 <script type="text/javascript">//<![CDATA[
@@ -309,9 +316,9 @@
 							throw error;
 						}),
 				  parseIPIpip: (ip, elID) => {
-						IP.get(`https://qqwry.api.skk.moe/${ip}`, 'json')
+						IP.get(`https://geoip.gbxcloud.com/?geoip=${ip}`, 'text')
 							.then(resp => {
-								 document.getElementById(elID).innerHTML = resp.data.geo;
+								 document.getElementById(elID).innerHTML = resp.data;
 							})
 					},
 
@@ -634,5 +641,30 @@ function download_conf(){
 	createAndDownloadFile("config.yaml",lv.innerHTML)
 	return
 }
+
+
+function start(){
+	XHR.get('<%=url([[admin]], [[services]], [[clash]], [[start]])%>',null,function(x, data){}
+		);
+	window.setTimeout("location.href='/cgi-bin/luci/admin/services/clash/'", 500);
+	return
+}
+
+function stop(){
+	XHR.get('<%=url([[admin]], [[services]], [[clash]], [[stop]])%>',null,function(x, data){}
+		);
+	window.setTimeout("location.href='/cgi-bin/luci/admin/services/clash/'", 500);
+	return
+}
+
+function reload(){
+	XHR.get('<%=url([[admin]], [[services]], [[clash]], [[reload]])%>',null,function(x, data){}
+		);
+	window.setTimeout("location.href='/cgi-bin/luci/admin/services/clash/'", 500);
+	return
+}
+
+//]]>
+
 </script>
 

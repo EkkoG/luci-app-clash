@@ -3,16 +3,16 @@
 "Language: zh_CN\n"
 
 msgid "Custom TLS Host"
-msgstr "自定义TLS主机"
+msgstr "自定义 TLS 主机"
 
 msgid "Cache DNS"
-msgstr "缓存的DNS"
+msgstr "缓存的 DNS"
 
 msgid "Fake IP Range"
-msgstr "假IP范围"
+msgstr "Fake IP 范围"
 
 msgid "Ip range will be added to iptables"
-msgstr "Ip范围将添加到iptables"
+msgstr "IP 范围将添加到 iptables"
 
 msgid "New Version :"
 msgstr "新版本："
@@ -39,7 +39,7 @@ msgid "Servers"
 msgstr "服务器"
 
 msgid "Custom List DNS"
-msgstr "自定义列表DNS"
+msgstr "自定义列表 DNS"
 
 msgid "Apply Custom List"
 msgstr "应用自定义列表"
@@ -51,7 +51,7 @@ msgid "Allow Lan"
 msgstr "允许局域网"
 
 msgid "Bind All IP Addresses"
-msgstr "绑定所有IP地址"
+msgstr "绑定所有 IP 地址"
 
 msgid "Bind Address"
 msgstr "绑定地址"
@@ -72,7 +72,7 @@ msgid "Update Config"
 msgstr "更新配置"
 
 msgid "NOT RUNNING"
-msgstr "末运行"
+msgstr "未运行"
 
 msgid "Enabled Custom Rule"
 msgstr "启用自定义规则"
@@ -93,7 +93,7 @@ msgid "Start"
 msgstr "启用客户端"
 
 msgid "Reload"
-msgstr "重装客户端"
+msgstr "Reload 客户端"
 
 msgid "enabled"
 msgstr "启用"
@@ -114,16 +114,19 @@ msgid "Proxy Ports"
 msgstr "代理端口设置"
 
 msgid "DNS Settings"
-msgstr "DNS设置"
+msgstr "DNS 设置"
 
 msgid "Http Port"
-msgstr "http代理端口"
+msgstr "HTTP 代理端口"
 
 msgid "Socks Port"
-msgstr "socks代理端口"
+msgstr "SOCKS 代理端口"
 
 msgid "Redir Port"
-msgstr "redir代理端口"
+msgstr "Redir 代理端口"
+
+msgid "TProxy Port"
+msgstr "TProxy 代理端口"
 
 msgid "No Update | Return"
 msgstr "已安装最新本 | 返回"
@@ -133,6 +136,18 @@ msgstr "日志级别"
 
 msgid "Choose Log Level"
 msgstr "选择日志级别"
+
+msgid "Proxy China traffic"
+msgstr "是否代理国内流量"
+
+msgid "China traffic not to Clash"
+msgstr "中国列表以外"
+
+msgid "China traffic to Clash"
+msgstr "全局"
+
+msgid "Make China traffic go to Clash"
+msgstr "是否代理国内网站，和[代理模式]不同，如果选择中国列表以外则国内流量不经过 Clash"
 
 msgid "Overview"
 msgstr "概览"
@@ -153,7 +168,7 @@ msgid "NO CONFIG"
 msgstr "没配置"
 
 msgid "Clash Mode"
-msgstr "Clash模式"
+msgstr "Clash 模式"
 
 msgid "App Name"
 msgstr "应用程序名称"
@@ -177,40 +192,40 @@ msgid "Check"
 msgstr "检查"
 
 msgid "DNS Forwarding"
-msgstr "DNS转发"
+msgstr "DNS 转发"
 
 msgid "Set custom DNS forwarder in DHCP and DNS Settings and forward all dns traffic to clash"
-msgstr "在DHCP和DNS设置自定义DNS转发,转发所有dns流量到clash"
+msgstr "在 DHCP 和 DNS 设置自定义 DNS 转发,转发所有 DNS 流量到 clash"
 
 msgid "Proxy Lan IP"
 msgstr "走代理的局域网IP"
 
 msgid "Only selected IPs will be proxied if enabled. fake-ip mode not supported"
-msgstr "如果启用，仅选择IP只走代理,不支持fake-ip模式"
+msgstr "如果启用，仅选择 IP 只走代理,不支持 fake-ip 模式"
 
 msgid "Proxy Lan List"
-msgstr "走代理的IP列表"
+msgstr "走代理的 IP 列表"
 
 msgid "Only selected IPs will be proxied"
-msgstr "选择IP只走代理"
+msgstr "选择 IP 只走代理"
 
 msgid "Bypass Lan IP"
-msgstr "不走代理的局域网IP"
+msgstr "不走代理的局域网 IP"
 
 msgid "Selected IPs will not be proxied if enabled. fake-ip mode not supported"
-msgstr "如果启用，仅选择IP只不走代理,不支持fake-ip模式"
+msgstr "如果启用，仅选择 IP 只不走代理,不支持 fake-ip 模式"
 
 msgid "Bypass Lan List"
-msgstr "不走代理的IP列表"
+msgstr "不走代理的 IP 列表"
 
 msgid "Selected IPs will not be proxied"
-msgstr "选择LAN IP只不走代理"
+msgstr "选择 LAN IP 只不走代理"
 
 msgid "Enabling Custom DNS will Overwrite your config.yaml dns section"
-msgstr "启用自定义DNS会覆盖config.yaml dns"
+msgstr "启用自定义 DNS 会覆盖 config.yaml dns"
 
 msgid "Dashboard Host"
-msgstr "外部控制Host"
+msgstr "外部控制 Host"
 
 msgid "Dashboard Port"
 msgstr "外部控制端口"
@@ -252,10 +267,10 @@ msgid "NO ACCESS"
 msgstr "无法访问"
 
 msgid "Domestic IP"
-msgstr "国内网IP"
+msgstr "国内网 IP"
 
 msgid "Global IP"
-msgstr "国外网IP"
+msgstr "国外网 IP"
 
 msgid "clash"
 msgstr "clash"
@@ -264,7 +279,7 @@ msgid "DASHBOARD"
 msgstr "外部控制"
 
 msgid "Clash Dashboard"
-msgstr "Clash控制面板"
+msgstr "Clash 控制面板"
 
 msgid "Client"
 msgstr "客户端"
@@ -279,7 +294,7 @@ msgid "logs"
 msgstr "日志"
 
 msgid "Custom DNS"
-msgstr "自定义DNS"
+msgstr "自定义 DNS"
 
 msgid "Modify yaml DNS"
 msgstr "修改 DNS"
@@ -312,22 +327,22 @@ msgid "Config"
 msgstr "配置"
 
 msgid "NB: press ENTER to create a blank line at the end of input."
-msgstr "填写时请按照模板格式, 按Enter键在输入结束时创建一行空行"
+msgstr "填写时请按照模板格式, 按 Enter 键在输入结束时创建一行空行"
 
 msgid "GEOIP Database"
-msgstr "GEOIP数据库"
+msgstr "GEOIP 数据库"
 
 msgid "Update GEOIP Database"
-msgstr "更新GEOIP数据库"
+msgstr "更新 GEOIP 数据库"
 
 msgid "Upload Config"
 msgstr "上传配置"
 
 msgid "NB: Only upload file with name config.yml or config.yaml"
-msgstr "注意：上载config.yml或config.yaml的文件"
+msgstr "注意：上载 config.yml 或 config.yaml 的文件"
 
 msgid "Subcription Url"
-msgstr "订阅URL"
+msgstr "订阅 URL"
 
 msgid "Update Subcription"
 msgstr "更新订阅配置"
@@ -345,10 +360,10 @@ msgid "Server Subscription Address"
 msgstr "服务器订阅地址"
 
 msgid "Clash Subscription Address"
-msgstr "Clash订阅地址"
+msgstr "Clash 订阅地址"
 
 msgid "V2/SSR Subscription Address, Only input your subscription address without any api conversion url"
-msgstr "V2/SSR订阅地址,输入订阅地址不要添加api转换地址"
+msgstr "V2/SSR 订阅地址,输入订阅地址不要添加 API 转换地址"
 
 msgid "Changes to config file must be made from source"
 msgstr "必须从源文件更改配置文件"
@@ -357,7 +372,7 @@ msgid "Import Config"
 msgstr "导入配置"
 
 msgid "Enable to create custom config.yaml. Note that this will overide any configuration you already have"
-msgstr "启用以创建自定义config.yaml。注意，这会覆盖/etc/clash/config.yaml"
+msgstr "启用以创建自定义 config.yaml。注意，这会覆盖 /etc/clash/config.yaml"
 
 
 msgid "host"
@@ -463,7 +478,7 @@ msgid "Custom"
 msgstr "自定义"
 
 msgid "Config Type"
-msgstr "Clash配置类型"
+msgstr "Clash 配置类型"
 
 msgid "Select Configuration type"
 msgstr "选择配置类型”"
@@ -523,13 +538,13 @@ msgid "Rule"
 msgstr "规则"
 
 msgid "Custom Rule Url"
-msgstr "自定义规则URL"
+msgstr "自定义规则 URL"
 
 msgid "Download Rule"
 msgstr "下载规则"
 
 msgid "Insert your custom rule Url and click download"
-msgstr "输入自定义规则URL并单击下载"
+msgstr "输入自定义规则 URL 并单击下载"
 
 msgid "Delete Rule"
 msgstr "删除规则"
@@ -568,25 +583,25 @@ msgid "Core"
 msgstr "内核"
 
 msgid "Select core, clashr support ssr while clash does not."
-msgstr "选择内核clash不支持ssr, clashr支持ssr"
+msgstr "选择内核 clash 不支持 ssr, clashr 支持 ssr"
 
 msgid "Downloading..."
 msgstr "正在下载。。。"
 
 msgid "Remove Lan DNS"
-msgstr "删除局域网DNS"
+msgstr "删除局域网 DNS"
 
 msgid "Remove Lan custom DNS Servers when client is disabled"
-msgstr "禁用客户端时删除局域网自定义DNS服务器"
+msgstr "禁用客户端时删除局域网自定义 DNS 服务器"
 
 msgid "Enable ipv6"
-msgstr "启用ipv6"
+msgstr "启用 IPv6"
 
 msgid "Allow ipv6 traffic through clash"
-msgstr "允许ipv6流量通过clash"
+msgstr "允许 IPv6 流量通过 clash"
 
 msgid "NB: Upload GEOIP Database file Country.mmdb"
-msgstr "注意：上传GEOIP数据库文件Country.mmdb"
+msgstr "注意：上传 GEOIP 数据库文件 Country.mmdb"
 
 msgid "Download logs"
 msgstr "下载日志"
@@ -619,7 +634,7 @@ msgid "【HTTP】./hk.yaml or 【File】/etc/clash/hk.yaml"
 msgstr "【HTTP】./hk.yaml，【文件】/etc/clash/hk.yaml"
 
 msgid "Provider URL"
-msgstr "代理集URL"
+msgstr "代理集 URL"
 
 msgid "Provider Interval"
 msgstr "代理集更新间隔"
@@ -628,7 +643,7 @@ msgid "Provider Health Check"
 msgstr "代理集状态检查"
 
 msgid "Health Check URL"
-msgstr "状态检查URL"
+msgstr "状态检查 URL"
 
 msgid "Health Check Interval"
 msgstr "状态检查间隔"
@@ -643,16 +658,16 @@ msgid "Proxy Provider"
 msgstr "代理集"
 
 msgid "Tun Mode"
-msgstr "Tun模式"
+msgstr "TUN 模式"
 
 msgid "Select Tun Mode"
-msgstr "选Tun模式"
+msgstr "选 TUN 模式"
 
 msgid "Tun Mode DNS"
-msgstr "Tun模式DNS"
+msgstr "TUN 模式 DNS"
 
 msgid "Enable Tun custom DNS and make sure you are using tun supported core"
-msgstr "启用Tun自定义DNS,并确保使用支持的Tun内核"
+msgstr "启用 TUN 自定义 DNS,并确保使用支持的 TUN 内核"
 
 msgid "Upload Provider File"
 msgstr "上传代理集文件"
@@ -664,28 +679,28 @@ msgid "Provider File"
 msgstr "代理集文件"
 
 msgid "Modify Tun DNS"
-msgstr "修改Tun DNS"
+msgstr "修改 TUN DNS"
 
 msgid "Local Update GeoIP"
-msgstr "本地更新GeoIP数据库"
+msgstr "本地更新 GeoIP 数据库"
 
 msgid "Online Update GeoIP"
-msgstr "在线更新GeoIP数据库"
+msgstr "在线更新 GeoIP 数据库"
 
 msgid "MaxMind License Key"
-msgstr "MaxMind许可证密钥"
+msgstr "MaxMind 许可证密钥"
 
 msgid "License Key"
 msgstr "许可证密钥"
 
 msgid "Auto Update GeoIP Database"
-msgstr "自动更新GeoIP数据库"
+msgstr "自动更新 GeoIP 数据库"
 
 msgid "Update Day (Day of Month)"
 msgstr "更新(每月的日)"
 
 msgid "GeoIP Update Time"
-msgstr "GeoIP更新时间"
+msgstr "GeoIP 更新时间"
 
 msgid "Every 1st Day"
 msgstr "每月的第一天"
@@ -703,7 +718,7 @@ msgid "Every 28th Day"
 msgstr "每月的第二十八天"
 
 msgid "Update GeoIP"
-msgstr "更新GeoIP数据库"
+msgstr "更新 GeoIP 数据库"
 
 msgid "Update Time"
 msgstr "更新时间"
@@ -745,13 +760,13 @@ msgid "Monthly"
 msgstr "每月"
 
 msgid "Upload Clash(Tun)"
-msgstr "上传Clash(Tun)"
+msgstr "上传Clash(TUN)"
 
 msgid "NB: Upload Clash Supported Tun (clash)"
-msgstr "注意：上传clash支持的Tun"
+msgstr "注意：上传 clash 支持的 TUN"
 
 msgid "Download Clash/Clashr"
-msgstr "下载Clash/Clashr"
+msgstr "下载 Clash/Clashr"
 
 msgid "No file chosen"
 msgstr "未选择文件"
@@ -790,7 +805,7 @@ msgid "Daily Server subscription update time. Only update config in use"
 msgstr "每日服务器订阅更新时间。仅更新正在使用的配置"
 
 msgid "NB: Only upload file with name .yaml.It recommended to rename each upload file name to avoid overwrite"
-msgstr "注意：仅上载名为.yaml的文件。建议重命名每个上载文件名以避免覆盖"
+msgstr "注意：仅上载名为 .yaml 的文件。建议重命名每个上载文件名以避免覆盖"
 
 msgid "Not Selected"
 msgstr "未选择"
@@ -805,7 +820,7 @@ msgid "Give a name for your config"
 msgstr "为配置命名"
 
 msgid "Config Type"
-msgstr "Clash配置类型"
+msgstr "Clash 配置类型"
 
 msgid "SUBSCRIBE"
 msgstr "订阅配置"
@@ -907,7 +922,7 @@ msgid "Downloading..."
 msgstr "正在下载规则..."
 
 msgid "Clash Config"
-msgstr "Clash配置"
+msgstr "Clash 配置"
 
 msgid "VIEW CONFIG"
 msgstr "查看配置"
@@ -925,13 +940,13 @@ msgid "2.Download the game rules you want to use from the game rules list on thi
 msgstr "2. 从该页的游戏规则列表中下载要使用的游戏规则。"
 
 msgid "3. Make sure your game and servers support UDP"
-msgstr "3. 确保游戏和服务器支持UDP。"
+msgstr "3. 确保游戏和服务器支持 UDP。"
 
 msgid "4.Click on ADD, Set the corresponding policy group of the downloaded game rules and save, recommended: FallBack"
-msgstr "4. 单击添加，设置下载游戏规则的相应策略组（策略组类型建议:FallBack）。"
+msgstr "4. 单击添加，设置下载游戏规则的相应策略组（策略组类型建议：FallBack）。"
 
 msgid "5.Select ClashTun Core type and start client"
-msgstr "5. 在客户端页选择ClashTun内核(https://github.com/comzyh/clash/releases)和启用游戏规则。"
+msgstr "5. 在客户端页选择 ClashTun 内核(https://github.com/comzyh/clash/releases) 和启用游戏规则。"
 
 msgid "RULE"
 msgstr "规则模式"
@@ -949,7 +964,7 @@ msgid "Choose proxy mode"
 msgstr "选择代理模式"
 
 msgid "NB: Upload only Dreamacro clash tun core - (https://github.com/Dreamacro/clash/releases/tag/TUN)"
-msgstr "注意：只上传clash tun内核-(https://github.com/Dreamacro/clash/releases/tag/TUN)"
+msgstr "注意：只上传 clash TUN 内核-(https://github.com/Dreamacro/clash/releases/tag/TUN)"
 
 msgid "Load Provider"
 msgstr "读取代理集"
@@ -961,13 +976,13 @@ msgid "Every Hour"
 msgstr "每个小时"
 
 msgid "Every 6 Hours"
-msgstr "每个6小时"
+msgstr "每 6 个小时"
 
 msgid "Every 12 Hours"
-msgstr "每个12小时"
+msgstr "每 12 个小时"
 
 msgid "Every 24 Hours"
-msgstr "每个24小时"
+msgstr "每 24 小个时"
 
 msgid "Clear Clash Log"
 msgstr "清除日志"
@@ -1006,7 +1021,7 @@ msgid "IP/Domain/Address/Keyword/Port"
 msgstr "IP/域/地址/关键字/端口"
 
 msgid "Manually download, unzip and rename clash core from links below and upload"
-msgstr "从下面的链接手动下载、解压和重命名到clash然后上载"
+msgstr "从下面的链接手动下载、解压和重命名到 clash 然后上载"
 
 msgid "Manual Upload"
 msgstr "手动上载"
@@ -1015,25 +1030,25 @@ msgid "Download Online"
 msgstr "在线下载"
 
 msgid "Yacd Dashboard"
-msgstr "Yacd控制面板"
+msgstr "Yacd 控制面板"
 
 msgid "Enable Ping Servers"
-msgstr "启用Ping服务器"
+msgstr "启用 Ping 服务器"
 
 msgid "New Config(Rename fields)"
 msgstr "新配置(重命名字段)"
 
 msgid "Enable UDP"
-msgstr "启用UDP"
+msgstr "启用 UDP"
 
 msgid "Enable udp traffic ,make sure your server support udp"
-msgstr "启用udp流量，服务器必须支持udp"
+msgstr "启用 UDP 流量，服务器必须支持 UDP"
 
 msgid "DNS Cache"
-msgstr "DNS缓存"
+msgstr "DNS 缓存"
 
 msgid "Set to enable or disable dns cache"
-msgstr "设置为启用或禁用dns缓存"
+msgstr "设置为启用或禁用 DNS 缓存"
 
 msgid "Old Config"
 msgstr "旧配置"
@@ -1042,16 +1057,16 @@ msgid "Import config info"
 msgstr "导入配置信息"
 
 msgid "Import V2ray config info successful"
-msgstr "导入V2ray配置信息成功"
+msgstr "导入 V2ray 配置信息成功"
 
 msgid "Import Trojan config info successful"
-msgstr "导入Trojan配置信息成功"
+msgstr "导入 Trojan 配置信息成功"
 
 msgid "Import Shadowsocks config info successful"
-msgstr "导入Shadowsocks配置信息成功"
+msgstr "导入 Shadowsocks 配置信息成功"
 
 msgid "Import ShadowsocksR config info successful"
-msgstr "导入ShadowsocksR配置信息成功"
+msgstr "导入 ShadowsocksR 配置信息成功"
 
 msgid "Invalid link"
 msgstr "无效格式"
@@ -1114,16 +1129,16 @@ msgid "SCRIPT"
 msgstr "脚本模式"
 
 msgid "NB: Set Clash Mode to Script if want to use"
-msgstr "注意：如果要使用，请将Clash模式,设置为脚本"
+msgstr "注意：如果要使用，请将 Clash 模式,设置为脚本"
 
 msgid "Whitelist IPs"
-msgstr "启用白名单IP"
+msgstr "启用白名单 IP"
 
 msgid "Blacklist Ips"
-msgstr "启用黑名单IP"
+msgstr "启用黑名单 IP"
 
 msgid "Whitelist or Blacklist IPs to use Clash ( Only support enhanced-mode: redir-host )"
-msgstr "启用白名单或黑名单IP ( 仅支持enhanced-mode: redir-host )"
+msgstr "启用白名单或黑名单I P ( 仅支持 enhanced-mode: redir-host )"
 
 msgid "Rule Providers Manager"
 msgstr "规则集经理"
@@ -1168,25 +1183,25 @@ msgid "Set Interface Name"
 msgstr "设置接口名称"
 
 msgid "Tun Mode"
-msgstr "Tun模式"
+msgstr "TUN 模式"
 
 msgid "Enable Tun and make sure you are using tun supported core"
-msgstr "启用Tun并确保您使用的是Tun支持的核心"
+msgstr "启用 TUN 并确保您使用的是 TUN 支持的核心"
 
 msgid "Stack"
 msgstr "Stack"
 
 msgid "Select Stack Mode"
-msgstr "选择Stack模式"
+msgstr "选择 Stack 模式"
 
 msgid "Enable Clash DNS"
-msgstr "启用Clash DNS"
+msgstr "启用 Clash DNS"
 
 msgid "DNS Listen Port"
-msgstr "DNS监听端口"
+msgstr "DNS 监听端口"
 
 msgid "Set DNS Listen Port"
-msgstr "设置DNS侦听端口"
+msgstr "设置 DNS 监听端口"
 
 msgid "Default NameServer"
 msgstr "默认名称服务器"
@@ -1201,19 +1216,19 @@ msgid "Select Enhanced Mode"
 msgstr "选择增强模式"
 
 msgid "Fake IP Range"
-msgstr "假IP范围"
+msgstr "Fake IP 范围"
 
 msgid "Set Fake IP Range"
-msgstr "设置假IP范围"
+msgstr "设置 Fake IP 范围"
 
 msgid "Fake IP Filter List"
-msgstr "假IP过滤器列表"
+msgstr "Fake IP 过滤器列表"
 
 msgid "Fake IP Filter"
-msgstr "假IP过滤器"
+msgstr "Fake IP 过滤器"
 
 msgid "DNS Hijack"
-msgstr "DNS劫持"
+msgstr "DNS 劫持"
 
 msgid "Enable"
 msgstr "启用"
@@ -1228,7 +1243,7 @@ msgid "Port"
 msgstr "端口"
 
 msgid "Authentication"
-msgstr "HTTP(S)和SOCKS5认证方式"
+msgstr "HTTP(S) 和 SOCKS5 认证方式"
 
 msgid "Username"
 msgstr "用户名"
@@ -1243,22 +1258,22 @@ msgid "IP"
 msgstr "IP"
 
 msgid "Nameservers & Fallback"
-msgstr "自定义上游DNS服务器"
+msgstr "自定义上游 DNS 服务器"
 
 msgid "Type"
 msgstr "类型"
 
 msgid "Advance DNS"
-msgstr "高级DNS设置"
+msgstr "高级 DNS 设置"
 
 msgid "Clash DNS"
-msgstr "配置DNS设置"
+msgstr "配置 DNS 设置"
 
 msgid "Mixed Port"
-msgstr "HTTP(S)和SOCKS5同一端口上"
+msgstr "HTTP(S) 和 SOCKS5 同一端口上"
 
 msgid "Enable IPv6"
-msgstr "启用IPv6"
+msgstr "启用 IPv6"
 
 msgid "Filter List"
 msgstr "自定义过滤器列表"
@@ -1276,4 +1291,4 @@ msgid "No Protocol"
 msgstr "不带协议"
 
 msgid "GeoIP Source"
-msgstr "GeoIP下载连接"
+msgstr "GeoIP 下载连接"

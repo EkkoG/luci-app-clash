@@ -93,7 +93,7 @@ elif [ ! -f "$CONFIG_YAML_PATH" ] && [ ! -f "$CONFIG_YAML" ];then
 		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
 			echo "No config found" >$REAL_LOG 
 		elif [ "${lang}" == "zh_cn" ];then
-			echo "找不到配置文章" >$REAL_LOG
+			echo "找不到配置文件" >$REAL_LOG
 		fi
 		sleep 5
 		echo "Clash for OpenWRT" >$REAL_LOG
@@ -217,8 +217,10 @@ rules(){
 
 		dns_port=$(grep listen: $CONFIG_YAML |awk -F ':' '{print $3}' |tr -cd "[0-9]")
 		redir_port=$(uci get clash.config.redir_port 2>/dev/null)
+		tproxy_port=$(uci get clash.config.tproxy_port 2>/dev/null)
 		#fake_ip_range=$(uci get clash.config.fake_ip_range 2>/dev/null)		
 		ipv6=$(uci get clash.config.enable_ipv6 2>/dev/null)
+		global=$(uci get clash.config.global 2>/dev/null)
 		core=$(uci get clash.config.core 2>/dev/null)
 		tun_mode=$(uci get clash.config.tun_mode 2>/dev/null)
 		#lan_ip=$(uci get network.lan.ipaddr 2>/dev/null |awk -F '/' '{print $1}' 2>/dev/null)
@@ -263,7 +265,33 @@ rules(){
 				 ipset add localnetwork "$wan_ip4s" 2>/dev/null
 			  done
 		    fi			
+
+			ipset create localnetwork6 hash:net family inet6
+			ipset add localnetwork6 ::/128
+			ipset add localnetwork6 ::1/128
+			ipset add localnetwork6 ::ffff:0:0/96
+			ipset add localnetwork6 ::ffff:0:0:0/96
+			ipset add localnetwork6 64:ff9b::/96
+			ipset add localnetwork6 100::/64
+			ipset add localnetwork6 2001::/32
+			ipset add localnetwork6 2001:20::/28
+			ipset add localnetwork6 2001:db8::/32
+			ipset add localnetwork6 2002::/16
+			ipset add localnetwork6 fc00::/7
+			ipset add localnetwork6 fe80::/10
+			ipset add localnetwork6 ff00::/8
+
+			if [ -n "$ip6" ]; then
+				for wan_ip6s in $ip6; do
+					ipset add localnetwork6 "$wan_ip6s"
+				done
+			fi			
+
+
+		if [ "${global}" -eq 0 ];then
 			sh /usr/share/clash/chinaipset.sh >/dev/null 2>&1
+		fi
+		sh /usr/share/clash/chinadnsipset.sh >/dev/null 2>&1
 
 		
 		if [ "$(iptables -t nat -nL PREROUTING --line-number |grep "udp dpt:53" |grep "0.0.0.0/0 \{0,\}0.0.0.0/0" |wc -l)" -gt 1 ] && [ "$dnsforwader" -eq "1" ]; then
@@ -299,55 +327,84 @@ rules(){
 		EOF
 			
 		if [ "${core}" -eq 1 ] || [ "${core}" -eq 2 ];then
+			# 据说能提升性能？
+			iptables -t mangle -N clash_divert
+			iptables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_divert -j ACCEPT
+			iptables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
 		
-			iptables -t nat -N clash
-			iptables -t nat -F clash
-			iptables -t nat -A clash -m set --match-set localnetwork dst -j RETURN
-			iptables -t nat -A clash -m set --match-set reject_lan src -j RETURN
-			iptables -t nat -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t nat -A clash -m set --match-set china dst -j RETURN			
-			iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
-			iptables -t nat -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
-			iptables -t nat -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
-           	iptables -t nat -A PREROUTING -p tcp -j clash
-
-				
-			ip rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
-			ip route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"			
 			iptables -t mangle -N clash
+			iptables -t mangle -F clash
+			iptables -t mangle -A clash -m set --match-set china_dns dst -j RETURN			
 			iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
 			iptables -t mangle -A clash -m set --match-set reject_lan src -j RETURN
 			iptables -t mangle -A clash -m set ! --match-set proxy_lan src -j RETURN
-			iptables -t mangle -A clash -m set --match-set china dst -j RETURN
-			iptables -t mangle -A clash -p udp -j TPROXY --on-port "${redir_port}" --tproxy-mark "$PROXY_FWMARK"
-			iptables -t mangle -A PREROUTING -p udp -j clash
-			
+
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash -m set --match-set china dst -j RETURN			
+			fi
+			# iptables -t nat -A clash -p tcp -j REDIRECT --to-ports "${redir_port}"
+			iptables -t nat -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports "${redir_port}"
+			iptables -t nat -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports "${redir_port}"			
+           	iptables -t mangle -A PREROUTING -j clash
+
+			iptables -t mangle -N clash_output
+			iptables -t mangle -A clash_output -m set --match-set localnetwork dst -j RETURN
+			iptables -t mangle -A clash_output -m set --match-set china_dns dst -j RETURN
+			iptables -t mangle -A clash_output -m set --match-set reject_lan src -j RETURN
+			iptables -t mangle -A clash_output -m set ! --match-set proxy_lan src -j RETURN
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash_output -m set --match-set china dst -j RETURN
+			fi
+			iptables -t mangle -A OUTPUT -j clash_output
+			# 防止出现死循环 https://github.com/Dreamacro/clash/issues/158
+			iptables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
+
+			iptables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
+			iptables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
+
+			iptables -t mangle -A clash -p tcp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
+
+			iptables -t mangle -A clash -p udp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
 				
+			ip -f inet rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
+			ip -f inet route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"			
 			
-		   if [ "${fake_ip}" == "fake-ip" ];then
-			  iptables -t nat -N clash_output
-			  iptables -t nat -F clash_output
-			  iptables -t nat -A clash_output -m set --match-set localnetwork dst -j RETURN
-			  
-			  fake_ip_range=$(egrep '^ {0,}fake-ip-range' /etc/clash/config.yaml |grep fake-ip-range: |awk -F ': ' '{print $2}')
-			  if [ ! -z "${fake_ip_range}" ];then
-				iptables -t nat -A clash_output -p tcp -d $fake_ip_range -j REDIRECT --to-ports "${redir_port}"
-			  else
-				iptables -t nat -A clash_output -p tcp -d 198.18.0.0/16 -j REDIRECT --to-ports "${redir_port}"
-			  fi	
-			  iptables -t nat -A OUTPUT -p tcp -j clash_output
-		   fi
-   
-   
 			if [ "${ipv6}" == "true" ]; then	
-					  ip6tables -t nat -N clash
-					  if [ -n "${ip6}" ]; then
-						 for lan_ip6s in $ip6; do
-							ip6tables -t nat -A clash -d "$lan_ip6s" -j RETURN 2>/dev/null
-						 done
-					  fi
-					  ip6tables -t nat -A clash -p tcp -j REDIRECT --to-ports "$proxy_port"
-					  ip6tables -t nat -A PREROUTING -p tcp -j clash
+				# 据说能提升性能？
+				ip6tables -t mangle -N clash_divert
+				ip6tables -t mangle -A clash_divert -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_divert -j ACCEPT
+				ip6tables -t mangle -A PREROUTING -p tcp -m socket -j clash_divert
+
+				ip6tables -t mangle -N clash
+				ip6tables -t mangle -F clash
+				ip6tables -t mangle -A clash -m set --match-set china_dns6 dst -j RETURN			
+				ip6tables -t mangle -A clash -m set --match-set localnetwork6 dst -j RETURN
+
+
+				if [ "${global}" -eq 0 ];then
+					ip6tables -t mangle -A clash -m set --match-set china6 dst -j RETURN			
+				fi
+				ip6tables -t mangle -A PREROUTING -j clash
+
+				ip6tables -t mangle -N clash_output
+				ip6tables -t mangle -F clash_output
+				ip6tables -t mangle -A clash_output -m set --match-set china_dns6 dst -j RETURN
+				ip6tables -t mangle -A clash_output -m set --match-set localnetwork6 dst -j RETURN
+				ip6tables -t mangle -A OUTPUT -j clash_output
+				# 防止出现死循环 https://github.com/Dreamacro/clash/issues/158
+				ip6tables -t mangle -A clash_output -m owner --uid-owner 65534 -j RETURN
+
+				ip -6 rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
+				ip -6 route add local ::/0 dev lo table "$PROXY_ROUTE_TABLE"
+
+				ip6tables -t mangle -A clash_output -p tcp -j MARK --set-xmark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash_output -p udp -j MARK --set-xmark "$PROXY_FWMARK"
+
+
+				ip6tables -t mangle -A clash -p tcp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
+				ip6tables -t mangle -A clash -p udp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
 			fi	
 			
 			
@@ -383,14 +440,22 @@ rules(){
             iptables -t mangle -N clash
             iptables -t mangle -F clash
             iptables -t mangle -A clash -m set --match-set localnetwork dst -j RETURN
-			iptables -t mangle -A TROJAN_GO -m set --match-set china dst -j RETURN
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -A clash -m set --match-set china dst -j RETURN
+			fi
 			if [ "${fake_ip}" == "fake-ip" ];then
 			iptables -t mangle -A clash -d 198.18.0.0/16 -j MARK --set-mark "$PROXY_FWMARK"
 			fi
 			
             iptables -t mangle -I OUTPUT -j clash
-            iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -j MARK --set-mark "$PROXY_FWMARK"
-			iptables -t mangle -I PREROUTING -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
+            #iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -j MARK --set-mark "$PROXY_FWMARK"
+			#iptables -t mangle -I PREROUTING -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
+
+			if [ "${global}" -eq 0 ];then
+				iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -m set ! --match-set china dst -j MARK --set-mark "$PROXY_FWMARK"
+			else
+				iptables -t mangle -I PREROUTING -m set ! --match-set localnetwork dst -j MARK --set-mark "$PROXY_FWMARK"
+			fi
 			iptables -t mangle -I PREROUTING -m set --match-set reject_lan src -j RETURN >/dev/null 2>&1
 			iptables -t mangle -I PREROUTING -m set ! --match-set proxy_lan src -j RETURN >/dev/null 2>&1			
 			iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT
@@ -591,9 +656,12 @@ if  [  -f $CONFIG_YAML ] && [ "$(ls -l $CONFIG_YAML|awk '{print int($5)}')" -ne 
 	
     ip_rules >/dev/null 2>&1
 	
-        
+
     if [ "$(uci get clash.config.core)" -eq 1 ];then
-        	nohup $CLASH -d "$CLASH_CONFIG" > /usr/share/clash/clash.txt 2>&1 &	
+			chown nobody:nogroup /etc/clash/clash 2>/dev/null
+			#使用nobody启动内核方便代理路由自身流量
+			capabilties="cap_sys_resource,cap_dac_override,cap_net_raw,cap_net_bind_service,cap_net_admin"
+			capsh --caps="${capabilties}+eip" -- -c "capsh --user=nobody --addamb='${capabilties}' -- -c 'nohup $CLASH -d $CLASH_CONFIG > /usr/share/clash/clash.txt 2>&1 &'"
 		
 		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
 			echo "Clash Core Started Successfully " >$REAL_LOG 
@@ -705,10 +773,8 @@ remove_mark(){
 		PROXY_FWMARK="0x162" 2>/dev/null
 		PROXY_ROUTE_TABLE="0x162" 2>/dev/null
 
-
-    	ip rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
-    	ip route del local 0.0.0.0/0  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
-
+    	ip -f inet rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+    	ip -f inet route del local default  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
 		
 		TUN_DEVICE=$(egrep '^ {0,}device-url:' /etc/clash/config.yaml |grep device-url: |awk -F '//' '{print $2}')
 		if [ -z $TUN_DEVICE ];then
@@ -750,10 +816,6 @@ remove_mark(){
 		iptables -t nat -D PREROUTING -p tcp --dport 53 -j ACCEPT >/dev/null 2>&1
 		iptables -t nat -D PREROUTING -p udp --dport 53 -j DNAT --to "127.0.0.1:$dns_port"
 
-		if [ "${ipv6}" == "true" ]; then
-		ip6tables -t mangle -D PREROUTING -j MARK --set-mark "$PROXY_FWMARK" 2>/dev/null
-		fi
-
 		iptables -t mangle -F clash 2>/dev/null
 		iptables -t mangle -X clash 2>/dev/null
 		
@@ -767,6 +829,9 @@ remove_mark(){
 		ipset destroy proxy_lan >/dev/null 2>&1
 		ipset -! flush china >/dev/null 2>&1
 		ipset destroy china >/dev/null 2>&1
+
+		ipset -! flush china_dns >/dev/null 2>&1
+		ipset destroy china_dns >/dev/null 2>&1
 		
 		proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/! match-set proxy_lan src/=' | sort -r)
 		for natx in $proxy_lan; do
@@ -828,11 +893,6 @@ remove_mark(){
 			iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
 		done
 		
-		ip6tables -t mangle -F clash >/dev/null 2>&1
-		ip6tables -t mangle -D PREROUTING -p udp -j clash >/dev/null 2>&1
-		ip6tables -t mangle -X clash >/dev/null 2>&1
-		
-		
 		out_linese=$(iptables -nvL OUTPUT -t mangle |sed 1,2d |sed -n '/198.18.0.1\/16/=' 2>/dev/null |sort -rn)
 		for out_linee in $out_linese; do
 			iptables -t mangle -D OUTPUT "$out_linee" >/dev/null 2>&1
@@ -863,6 +923,33 @@ remove_mark(){
 		iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT
 				
 		revert_dns >/dev/null 2>&1
+
+# IPv6
+    	ip -f inet6 rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+    	ip -f inet6 route del local default  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+
+		ip6t_m="ip6tables -t mangle"
+		ipt_m="iptables -t mangle"
+		ipt_n="iptables -t nat"
+		for ipt in "$ipt_n" "$ipt_m" "$ip6t_m"; do
+			for chain in "PREROUTING" "OUTPUT"; do
+				for i in $(seq 1 $($ipt -nL $chain | grep -c clash)); do
+					local index=$($ipt --line-number -nL $chain | grep clash | head -1 | awk '{print $1}')
+					$ipt -D $chain $index 2>/dev/null
+				done
+			done
+			for chain in "clash" "clash_output" "clash_divert"; do
+				$ipt -F $chain 2>/dev/null
+				$ipt -X $chain 2>/dev/null
+			done
+		done
+
+		ipset -! flush china6 >/dev/null 2>&1
+		ipset destroy china6 >/dev/null 2>&1
+
+		ipset -! flush china_dns6 >/dev/null 2>&1
+		ipset destroy china_dns6 >/dev/null 2>&1
+
 		
 		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
 			echo "Restarting Dnsmasq " >$REAL_LOG 
@@ -962,5 +1049,6 @@ if pidof clash >/dev/null; then
 	  yml_dns_change 2>/dev/null
       rules 2>/dev/null	 
 	  echo "Clash Reload Completed"	
+	  echo "Clash for OpenWRT" >$REAL_LOG
 fi	  
 }
