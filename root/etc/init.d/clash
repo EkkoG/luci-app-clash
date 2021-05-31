@@ -367,8 +367,8 @@ rules(){
 
 			iptables -t mangle -A clash -p udp -m comment --comment "\'默认\'" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
 				
-			ip -f inet rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE"
-			ip -f inet route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"			
+			ip rule add fwmark "$PROXY_FWMARK" lookup "$PROXY_ROUTE_TABLE"
+			ip route add local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE"		
 			
 			if [ "${ipv6}" == "true" ]; then	
 				# 据说能提升性能？
@@ -773,8 +773,8 @@ remove_mark(){
 		PROXY_FWMARK="0x162" 2>/dev/null
 		PROXY_ROUTE_TABLE="0x162" 2>/dev/null
 
-    	ip -f inet rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
-    	ip -f inet route del local default  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+		ip rule del fwmark "$PROXY_FWMARK" lookup "$PROXY_ROUTE_TABLE" 2>/dev/null
+		ip route del local 0.0.0.0/0 dev lo table "$PROXY_ROUTE_TABLE" 2>/dev/null
 		
 		TUN_DEVICE=$(egrep '^ {0,}device-url:' /etc/clash/config.yaml |grep device-url: |awk -F '//' '{print $2}')
 		if [ -z $TUN_DEVICE ];then
@@ -925,8 +925,8 @@ remove_mark(){
 		revert_dns >/dev/null 2>&1
 
 # IPv6
-    	ip -f inet6 rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
-    	ip -f inet6 route del local default  dev lo table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+		ip -6 rule del fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" 2>/dev/null
+		ip -6 route del local ::/0 dev lo table "$PROXY_ROUTE_TABLE" 2>/dev/null
 
 		ip6t_m="ip6tables -t mangle"
 		ipt_m="iptables -t mangle"
