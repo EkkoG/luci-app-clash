@@ -1,0 +1,44 @@
+name: luci-app-clash
+
+on:
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
+jobs:
+  build:
+    name: ${{ matrix.arch }} build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - x86_64
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: aparcar/action-openwrt-sdk@composite
+        env:
+          ARCH: ${{ matrix.arch }}
+      - name: Prepare targets
+        id: po2lmo
+        run: |
+          REP=$(basename "${REPF}")
+          mv -vf ../src "package/${REP}"
+          test -d "package/${REP}/tools/po2lmo"
+      - name: Prebuild po2lmo host tool
+        if: success()
+        run: |
+          REP=$(basename "${REPF}")
+          pushd "package/${REP}/tools/po2lmo"
+          make && sudo make install
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: bin/packages/${{ matrix.arch }}/packages/*.ipk
+          draft: true
