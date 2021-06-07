@@ -22,18 +22,7 @@ jobs:
         uses: aparcar/action-openwrt-sdk@composite
         env:
           ARCH: ${{ matrix.arch }}
-      - name: Prepare targets
-        id: po2lmo
-        run: |
-          REP=$(basename "${REPF}")
-          mv -vf ../src "package/${REP}"
-          test -d "package/${REP}/tools/po2lmo"
-      - name: Prebuild po2lmo host tool
-        if: success()
-        run: |
-          REP=$(basename "${REPF}")
-          pushd "package/${REP}/tools/po2lmo"
-          make && sudo make install
+
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
