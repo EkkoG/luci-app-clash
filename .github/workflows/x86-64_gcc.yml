@@ -26,7 +26,6 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
           PACKAGES: |
-            luci-base
             luci-app-clash
           CUSTOM_PKG_DIR: luci-app-clash
 
