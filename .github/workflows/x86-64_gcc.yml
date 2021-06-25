@@ -26,7 +26,10 @@ jobs:
         uses: aparcar/action-openwrt-sdk@composite
         env:
           ARCH: ${{ matrix.arch }}
-          PACKAGES: luci-app-clash
+          PACKAGES: |
+            luci-base
+            luci-app-clash
+
       - name: Store packages
         uses: actions/upload-artifact@v2
         with:
