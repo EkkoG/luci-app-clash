@@ -10,8 +10,7 @@ jobs:
     name: ${{ matrix.arch }} build
     runs-on: ubuntu-latest
     env:
-      REPF: ${{ github.repository }}
-      PKGN: ${{ 'luci-app-clash' }}
+      PKG: luci-app-clash
     strategy:
       matrix:
         arch:
@@ -23,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        uses: aparcar/action-openwrt-sdk@composite
+        uses: cielpy/gh-action-sdk@master
         env:
           ARCH: ${{ matrix.arch }}
           PACKAGES: |
@@ -34,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.arch}}-packages
-          path: bin/packages/${{ matrix.arch }}/base/*.ipk
+          path: bin/packages/${{ matrix.arch }}/packages/*.ipk
