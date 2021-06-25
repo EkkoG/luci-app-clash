@@ -1,4 +1,4 @@
-name: luci-app-clash
+name: ci
 
 on:
   push:
@@ -9,6 +9,9 @@ jobs:
   build:
     name: ${{ matrix.arch }} build
     runs-on: ubuntu-latest
+    env:
+      REPF: ${{ github.repository }}
+      PKGN: ${{ 'luci-app-clash' }}
     strategy:
       matrix:
         arch:
@@ -39,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.arch}}-packages
-          path: bin/packages/${{ matrix.arch }}/packages/*.ipk
+          path: bin/packages/${{ matrix.arch }}/base/*.ipk
