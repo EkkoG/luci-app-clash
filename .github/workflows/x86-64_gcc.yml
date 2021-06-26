@@ -25,8 +25,7 @@ jobs:
         uses: cielpy/gh-action-sdk@master
         env:
           ARCH: ${{ matrix.arch }}
-          PACKAGES: |
-            luci-app-clash
+          PACKAGES: luci-app-clash
           CUSTOM_PKG_DIR: luci-app-clash
 
       - name: Store packages
