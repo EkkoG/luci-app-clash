@@ -21,16 +21,15 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        uses: aparcar/action-openwrt-sdk@composite
+        uses: cielpy/gh-action-sdk@master
         env:
           ARCH: ${{ matrix.arch }}
-          PACKAGES: |
-            luci-base
-            luci-app-clash
+          PACKAGES: luci-app-clash
+          CUSTOM_PKG_DIR: luci-app-clash
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: bin/packages/${{ matrix.arch }}/packages/*.ipk
+          files: bin/packages/${{ matrix.arch }}/base/luci-app-clash*.ipk
