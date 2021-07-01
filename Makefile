@@ -11,7 +11,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=LuCI
 	SUBMENU:=2. Clash For OpenWRT
 	TITLE:=LuCI app for clash
-	DEPENDS:=+luci-base +wget +iptables +coreutils-base64 +coreutils +coreutils-nohup +bash +ipset +curl +jsonfilter +ca-certificates +libcap +libcap-bin +iptables-mod-tproxy +kmod-tun
+	DEPENDS:=+luci-base +wget +iptables +coreutils-base64 +coreutils +coreutils-nohup +bash +ipset +curl +jsonfilter +ca-certificates +libcap +libcap-bin +iptables-mod-tproxy +iptables-mod-extra +kmod-tun
 	PKGARCH:=all
 	MAINTAINER:=frainzy1477
 endef
