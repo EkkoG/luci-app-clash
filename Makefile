@@ -137,29 +137,25 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./root/etc/clash/Country.mmdb $(1)/etc/clash
 	$(INSTALL_BIN) ./root/usr/share/clash/create/* $(1)/usr/share/clash/create
 	$(INSTALL_BIN) ./root/usr/share/clash/*.sh $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-clash.json $(1)/usr/share/rpcd/acl.d
-	$(INSTALL_BIN) ./root/usr/share/clash/rules/g_rules/Steam.rules $(1)/usr/share/clash/rules/g_rules
-	$(INSTALL_BIN) ./root//usr/share/clash/rules/rules.list $(1)/usr/share/clash/rules
+	$(INSTALL_CONF) ./root/usr/share/rpcd/acl.d/luci-app-clash.json $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_CONF) ./root/usr/share/clash/rules/g_rules/Steam.rules $(1)/usr/share/clash/rules/g_rules
+	$(INSTALL_CONF) ./root//usr/share/clash/rules/rules.list $(1)/usr/share/clash/rules
 	
-	$(INSTALL_BIN) ./root/usr/share/clash/luci_version $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/rule.yaml $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/server.list $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/clash_real.txt $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/logstatus_check $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/clash.txt $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/chinaipset.sh $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/china_ip.txt $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/china_ip6.txt $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/chinadnsipset.sh $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/china_dns.txt $(1)/usr/share/clash
-	$(INSTALL_BIN) ./root/usr/share/clash/china_dns6.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/luci_version $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/rule.yaml $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/server.list $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/clash_real.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/logstatus_check $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/clash.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/chinaipset.sh $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/china_ip.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/china_ip6.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/chinadnsipset.sh $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/china_dns.txt $(1)/usr/share/clash
+	$(INSTALL_CONF) ./root/usr/share/clash/china_dns6.txt $(1)/usr/share/clash
 	
-	$(INSTALL_BIN) ./root/usr/share/clash/dashboard/index.html $(1)/etc/clash/dashboard
-	$(INSTALL_BIN) ./root/usr/share/clash/dashboard/main.658aa6a6e3feec8f168b.css $(1)/etc/clash/dashboard
-	$(INSTALL_BIN) ./root/usr/share/clash/dashboard/img/ffac0fa1d89f15922b4594863b8b32e9.png $(1)/etc/clash/dashboard/img
-	$(INSTALL_BIN) ./root/usr/share/clash/dashboard/js/1.bundle.658aa6a6e3feec8f168b.min.js $(1)/etc/clash/dashboard/js
-	$(INSTALL_BIN) ./root/usr/share/clash/dashboard/js/bundle.658aa6a6e3feec8f168b.min.js $(1)/etc/clash/dashboard/js
-	$(INSTALL_BIN) ./root/usr/share/clash/yacd/* $(1)/usr/share/clash/yacd
+	$(CP) ./root/usr/share/clash/dashboard/* $(1)/etc/clash/dashboard
+	$(CP) ./root/usr/share/clash/yacd/* $(1)/usr/share/clash/yacd
 	
 	$(INSTALL_DATA) ./luasrc/clash.lua $(1)/usr/lib/lua/luci
 	$(INSTALL_DATA) ./luasrc/controller/*.lua $(1)/usr/lib/lua/luci/controller
